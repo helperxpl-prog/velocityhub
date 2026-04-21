@@ -1,13 +1,5 @@
 local HttpService = game:GetService("HttpService")
 
--- wait for game to fully load (client safe)
-if not game:IsLoaded() then
-    game.Loaded:Wait()
-end
-
-local player = game:GetService("Players").LocalPlayer
-if not player then return end
-
 local keyListURL = "https://pastebin.com/raw/dvdee62M"
 
 -- Your monetized links
@@ -19,32 +11,41 @@ local links = {
     "https://lootdest.org/s?MFAPzMYD"
 }
 
--- 🔥 MAIN EXECUTION FUNCTION
+-- 🔥 FIXED RUN FUNCTION
 local function run()
     print("Key verified! Running script...")
-
-    -- execute your remote script (fixed)
+    -- We use loadstring and game:HttpGet separately
     local success, err = pcall(function()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub"))()
     end)
-
+    
     if not success then
-        warn("Failed to load script:", err)
+        warn("Failed to load the main script: " .. tostring(err))
     end
 end
 
--- UI
+-- UI Setup (CoreGui is fine for client-side executors)
 local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Parent = game.CoreGui
+-- Check if we can protect the UI
+if gethui then
+    ScreenGui.Parent = gethui()
+elseif syn and syn.protect_gui then
+    syn.protect_gui(ScreenGui)
+    ScreenGui.Parent = game.CoreGui
+else
+    ScreenGui.Parent = game.CoreGui
+end
 
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 300, 0, 200)
 Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
+Frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
 
 local TextBox = Instance.new("TextBox", Frame)
 TextBox.Size = UDim2.new(1, -20, 0, 40)
 TextBox.Position = UDim2.new(0, 10, 0, 20)
 TextBox.PlaceholderText = "Enter Key..."
+TextBox.Text = ""
 
 local Submit = Instance.new("TextButton", Frame)
 Submit.Size = UDim2.new(1, -20, 0, 40)
@@ -56,7 +57,7 @@ GetKey.Size = UDim2.new(1, -20, 0, 40)
 GetKey.Position = UDim2.new(0, 10, 0, 120)
 GetKey.Text = "Get Key"
 
--- Key check
+-- Key check logic
 local function isValidKey(inputKey)
     local success, response = pcall(function()
         return game:HttpGet(keyListURL)
@@ -68,7 +69,7 @@ local function isValidKey(inputKey)
     end
 
     for key in string.gmatch(response, "[^\r\n]+") do
-        if key == inputKey then
+        if key:gsub("%s+", "") == inputKey:gsub("%s+", "") then -- Removes accidental spaces
             return true
         end
     end
@@ -76,7 +77,7 @@ local function isValidKey(inputKey)
     return false
 end
 
--- Verify button
+-- Button Connections
 Submit.MouseButton1Click:Connect(function()
     if isValidKey(TextBox.Text) then
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -84,9 +85,8 @@ Submit.MouseButton1Click:Connect(function()
             Text = "Key is valid!",
             Duration = 5
         })
-
+        ScreenGui:Destroy() -- Removes the key system UI once verified
         run()
-
     else
         game:GetService("StarterGui"):SetCore("SendNotification", {
             Title = "Error",
@@ -96,17 +96,16 @@ Submit.MouseButton1Click:Connect(function()
     end
 end)
 
--- Get Key button
 GetKey.MouseButton1Click:Connect(function()
     local randomLink = links[math.random(1, #links)]
-
     if setclipboard then
         setclipboard(randomLink)
+        game:GetService("StarterGui"):SetCore("SendNotification", {
+            Title = "Get Key",
+            Text = "Link copied to clipboard!",
+            Duration = 5
+        })
+    else
+        TextBox.Text = randomLink -- Fallback if executor doesn't have setclipboard
     end
-
-    game:GetService("StarterGui"):SetCore("SendNotification", {
-        Title = "Get Key",
-        Text = "Link copied to clipboard!",
-        Duration = 5
-    })
 end)
