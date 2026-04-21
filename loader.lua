@@ -11,35 +11,20 @@ local links = {
     "https://lootdest.org/s?MFAPzMYD"
 }
 
--- 🔥 FIXED RUN FUNCTION
+-- 🔥 YOUR MAIN SCRIPT HERE
 local function run()
     print("Key verified! Running script...")
-    -- We use loadstring and game:HttpGet separately
-    local success, err = pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub"))()
-    end)
-    
-    if not success then
-        warn("Failed to load the main script: " .. tostring(err))
-    end
+    -- This fetches the script and the extra () at the end executes it
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub"))()
 end
 
--- UI Setup (CoreGui is fine for client-side executors)
-local ScreenGui = Instance.new("ScreenGui")
--- Check if we can protect the UI
-if gethui then
-    ScreenGui.Parent = gethui()
-elseif syn and syn.protect_gui then
-    syn.protect_gui(ScreenGui)
-    ScreenGui.Parent = game.CoreGui
-else
-    ScreenGui.Parent = game.CoreGui
-end
+-- UI
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 300, 0, 200)
 Frame.Position = UDim2.new(0.5, -150, 0.5, -100)
-Frame.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 
 local TextBox = Instance.new("TextBox", Frame)
 TextBox.Size = UDim2.new(1, -20, 0, 40)
@@ -64,12 +49,12 @@ local function isValidKey(inputKey)
     end)
 
     if not success then
-        warn("Failed to fetch keys")
+        warn("Failed to fetch keys from Pastebin")
         return false
     end
 
     for key in string.gmatch(response, "[^\r\n]+") do
-        if key:gsub("%s+", "") == inputKey:gsub("%s+", "") then -- Removes accidental spaces
+        if key == inputKey then
             return true
         end
     end
@@ -77,7 +62,7 @@ local function isValidKey(inputKey)
     return false
 end
 
--- Button Connections
+-- Verify button connection
 Submit.MouseButton1Click:Connect(function()
     if isValidKey(TextBox.Text) then
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -85,7 +70,11 @@ Submit.MouseButton1Click:Connect(function()
             Text = "Key is valid!",
             Duration = 5
         })
-        ScreenGui:Destroy() -- Removes the key system UI once verified
+        
+        -- Close UI after success
+        ScreenGui:Destroy()
+        
+        -- Execute the main script
         run()
     else
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -96,8 +85,10 @@ Submit.MouseButton1Click:Connect(function()
     end
 end)
 
+-- Get Key button connection
 GetKey.MouseButton1Click:Connect(function()
     local randomLink = links[math.random(1, #links)]
+
     if setclipboard then
         setclipboard(randomLink)
         game:GetService("StarterGui"):SetCore("SendNotification", {
@@ -106,6 +97,6 @@ GetKey.MouseButton1Click:Connect(function()
             Duration = 5
         })
     else
-        TextBox.Text = randomLink -- Fallback if executor doesn't have setclipboard
+        print("Clipboard not supported: " .. randomLink)
     end
 end)
