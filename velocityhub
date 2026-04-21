@@ -1,11 +1,11 @@
 loadstring(game:HttpGet("https://raw.githubusercontent.com/blackowl1231/Z3US/refs/heads/main/Games/other.lua"))()
-local velocityhubLoader = Instance.new("ScreenGui")
-velocityhubLoader.Name = "velocityhub"
-zvelocityhubLoader.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-velocityhubLoader.Parent = game:GetService("CoreGui")
-velocityhubLoader.ResetOnSpawn = false
-velocityhubLoader.DisplayOrder = 999999
-velocityhubLoader.IgnoreGuiInset = true
+local z3USLoader = Instance.new("ScreenGui")
+z3USLoader.Name = "Z3US Loader"
+z3USLoader.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+z3USLoader.Parent = game:GetService("CoreGui")
+z3USLoader.ResetOnSpawn = false
+z3USLoader.DisplayOrder = 999999
+z3USLoader.IgnoreGuiInset = true
 
 local frame = Instance.new("Frame")
 frame.Name = "Frame"
