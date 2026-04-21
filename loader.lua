@@ -15,7 +15,7 @@ local links = {
 local function run()
     print("Key verified! Running script...")
     -- This fetches the script and the extra () at the end executes it
-    loadstring(game:HttpGet("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub"))()
+    loadstring(game:HttpGet(('https://raw.githubusercontent.com/blackowl1231/ZYPHERION/refs/heads/main/main.lua')))()
 end
 
 -- UI
