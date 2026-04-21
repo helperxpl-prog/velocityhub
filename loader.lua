@@ -1,5 +1,13 @@
 local HttpService = game:GetService("HttpService")
 
+-- wait for game to fully load (client safe)
+if not game:IsLoaded() then
+    game.Loaded:Wait()
+end
+
+local player = game:GetService("Players").LocalPlayer
+if not player then return end
+
 local keyListURL = "https://pastebin.com/raw/dvdee62M"
 
 -- Your monetized links
@@ -11,15 +19,23 @@ local links = {
     "https://lootdest.org/s?MFAPzMYD"
 }
 
--- 🔥 YOUR MAIN SCRIPT HERE
-local function run(loadstring(gamehttpGet:("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub")
+-- 🔥 MAIN EXECUTION FUNCTION
+local function run()
     print("Key verified! Running script...")
-    
-    -- velocityhub
+
+    -- execute your remote script (fixed)
+    local success, err = pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/helperxpl-prog/velocityhub/refs/heads/main/velocityhub"))()
+    end)
+
+    if not success then
+        warn("Failed to load script:", err)
+    end
 end
 
 -- UI
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Parent = game.CoreGui
 
 local Frame = Instance.new("Frame", ScreenGui)
 Frame.Size = UDim2.new(0, 300, 0, 200)
